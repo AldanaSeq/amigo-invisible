@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amigo Invisible</title>
+  <meta name="description" content="Aplicación web para organizar sorteos de Amigo Invisible con restricciones y resultados privados.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="hero__content">
+        <span class="badge">Regalos, azar y magia</span>
+        <h1 id="page-title">Amigo Invisible</h1>
+        <p>Organizá tu intercambio, agregá restricciones y revelá cada resultado de forma privada.</p>
+      </div>
+      <div class="gift-orbit" aria-hidden="true">
+        <div class="gift-card gift-card--large">
+          <img class="gift-icon" src="assets/gift-icon.svg" alt="">
+        </div>
+        <div class="gift-card gift-card--small">✨</div>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Configuración del sorteo">
+      <form class="panel event-panel" id="event-form">
+        <div class="panel__header">
+          <div>
+            <span class="section-kicker">Evento</span>
+            <h2>Datos principales</h2>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <label class="field">
+            <span>Nombre del evento</span>
+            <input id="event-name" type="text" placeholder="Cena de fin de año" maxlength="60" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Presupuesto del regalo</span>
+            <input id="gift-budget" type="number" min="0" step="100" placeholder="15000">
+          </label>
+          <label class="field">
+            <span>Fecha del intercambio</span>
+            <input id="exchange-date" type="date">
+          </label>
+        </div>
+      </form>
+
+      <section class="panel participants-panel" aria-labelledby="participants-title">
+        <div class="panel__header">
+          <div>
+            <span class="section-kicker">Participantes</span>
+            <h2 id="participants-title">Lista editable</h2>
+          </div>
+          <span class="counter" id="participant-count">0</span>
+        </div>
+
+        <div class="add-row">
+          <label class="field field--compact">
+            <span>Nombre</span>
+            <input id="participant-name" type="text" placeholder="Agregar participante" maxlength="40" autocomplete="off">
+          </label>
+          <button class="button button--primary" id="add-participant" type="button">
+            <span aria-hidden="true">＋</span>
+            Agregar participante
+          </button>
+        </div>
+
+        <div class="empty-state" id="participants-empty">
+          <span>🎁</span>
+          <p>Agregá al menos 3 personas para realizar el sorteo.</p>
+        </div>
+        <ul class="editable-list" id="participants-list" aria-label="Participantes"></ul>
+      </section>
+
+      <section class="panel restrictions-panel" aria-labelledby="restrictions-title">
+        <div class="panel__header">
+          <div>
+            <span class="section-kicker">Restricciones</span>
+            <h2 id="restrictions-title">No pueden tocarse</h2>
+          </div>
+          <span class="counter" id="restriction-count">0</span>
+        </div>
+
+        <div class="restriction-builder">
+          <label class="field field--compact">
+            <span>Persona A</span>
+            <select id="restriction-a"></select>
+          </label>
+          <label class="field field--compact">
+            <span>Persona B</span>
+            <select id="restriction-b"></select>
+          </label>
+          <button class="button button--secondary" id="add-restriction" type="button">
+            <span aria-hidden="true">⛓</span>
+            Agregar restricción
+          </button>
+        </div>
+
+        <div class="empty-state empty-state--small" id="restrictions-empty">
+          <p>Usá esta sección para parejas, familiares o personas que no deban regalarse entre sí.</p>
+        </div>
+        <ul class="editable-list" id="restrictions-list" aria-label="Restricciones"></ul>
+      </section>
+
+      <section class="panel draw-panel" aria-labelledby="draw-title">
+        <div class="panel__header">
+          <div>
+            <span class="section-kicker">Sorteo</span>
+            <h2 id="draw-title">Resultados privados</h2>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="button button--primary button--wide" id="run-draw" type="button">
+            <span aria-hidden="true">🎲</span>
+            Realizar sorteo
+          </button>
+          <button class="button button--ghost" id="reset-draw" type="button">
+            Reiniciar
+          </button>
+        </div>
+
+        <div class="status-message" id="status-message" role="status" aria-live="polite"></div>
+
+        <div class="results-card" id="results-card" hidden>
+          <div class="field">
+            <span>Ver resultado de</span>
+            <select id="viewer-name"></select>
+          </div>
+          <button class="button button--gold button--wide" id="show-result" type="button">
+            <span aria-hidden="true">🔐</span>
+            Ver mi amigo invisible
+          </button>
+          <div class="secret-result" id="secret-result" hidden>
+            <button class="close-result" id="close-result" type="button" aria-label="Ocultar resultado">×</button>
+            <span class="secret-label">Te tocó regalarle a</span>
+            <strong id="assigned-name"></strong>
+            <div class="secret-actions">
+              <button class="button button--secondary" id="copy-result" type="button">Copiar resultado</button>
+            </div>
+          </div>
+          <button class="button button--ghost button--wide" id="download-json" type="button">
+            Descargar resultados JSON
+          </button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
