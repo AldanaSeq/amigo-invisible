@@ -573,7 +573,7 @@ function loadSharedResult(payload) {
   elements.resultsCard.hidden = false;
   elements.secretResult.hidden = false;
   elements.assignedName.textContent = payload.receiver;
-  setStatus("Este es tu resultado privado. Guardá este link si necesitás volver a verlo.", "success");
+  setStatus("¡Sorpresa! Este es tu resultado privado. Guardá este link si necesitás volver a verlo.", "success");
 }
 
 function initializeApp() {
