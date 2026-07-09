@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ayuda | Amigo Invisible</title>
+  <meta name="description" content="Indicaciones de uso y preguntas frecuentes para la app de Amigo Invisible.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell help-page">
+    <section class="hero help-hero" aria-labelledby="help-title">
+      <div class="hero__content">
+        <span class="badge">Guía rápida</span>
+        <h1 id="help-title">Cómo usar Amigo Invisible</h1>
+        <p>Todo lo necesario para crear el sorteo, compartir resultados privados y resolver dudas frecuentes.</p>
+        <a class="help-link" href="index.html">Volver al sorteo</a>
+      </div>
+      <div class="gift-orbit" aria-hidden="true">
+        <div class="gift-card gift-card--large">
+          <img class="gift-icon" src="assets/gift-icon.svg" alt="">
+        </div>
+        <div class="gift-card gift-card--small">?</div>
+      </div>
+    </section>
+
+    <section class="help-grid" aria-label="Indicaciones y preguntas frecuentes">
+      <article class="panel help-card">
+        <span class="section-kicker">Paso a paso</span>
+        <h2>Indicaciones de uso</h2>
+        <ol class="steps-list">
+          <li>Completá el nombre del evento, el presupuesto y la fecha si querés dejar esos datos guardados.</li>
+          <li>Agregá al menos 3 participantes. Los nombres no pueden repetirse.</li>
+          <li>Si dos personas no pueden tocarse, agregalas en la sección de restricciones.</li>
+          <li>Presioná <strong>Realizar sorteo</strong>. La app mezcla los nombres y evita autoasignaciones.</li>
+          <li>Copiá el link privado de cada participante y mandáselo solo a esa persona.</li>
+          <li>Cada participante abre su link y ve únicamente a quién le toca regalarle.</li>
+        </ol>
+      </article>
+
+      <article class="panel help-card">
+        <span class="section-kicker">Compartir</span>
+        <h2>Resultados privados</h2>
+        <p>Después del sorteo aparece una lista de links privados. Cada link contiene solo el resultado de una persona, por eso se puede abrir desde otro navegador, celular o computadora sin que se reinicie.</p>
+        <p>Como la app no usa servidor, quien organiza técnicamente podría abrir cualquier link antes de enviarlo. Para un sistema donde ni la persona organizadora pueda saber los resultados haría falta un backend.</p>
+      </article>
+
+      <article class="panel help-card help-card--wide">
+        <span class="section-kicker">FAQ</span>
+        <h2>Preguntas frecuentes</h2>
+        <div class="faq-list">
+          <details>
+            <summary>¿Por qué al abrir la app en otro navegador aparece vacía?</summary>
+            <p>La lista principal se guarda localmente en el navegador donde se creó. Para compartir resultados con otras personas usá los links privados que aparecen después de realizar el sorteo.</p>
+          </details>
+          <details>
+            <summary>¿Los participantes pueden ver todos los resultados?</summary>
+            <p>No desde su link privado. Cada link muestra únicamente el resultado de esa persona.</p>
+          </details>
+          <details>
+            <summary>¿Qué pasa si alguien pierde su link?</summary>
+            <p>La persona organizadora puede volver a la app desde el mismo navegador donde hizo el sorteo y copiar nuevamente el link privado.</p>
+          </details>
+          <details>
+            <summary>¿Puedo cambiar participantes después de sortear?</summary>
+            <p>Sí, pero al editar, agregar o eliminar participantes se limpia el sorteo anterior. Después tenés que realizar un nuevo sorteo.</p>
+          </details>
+          <details>
+            <summary>¿Qué son las restricciones?</summary>
+            <p>Son pares de personas que no pueden tocarse entre sí. Sirven para parejas, familiares o cualquier combinación que quieras evitar.</p>
+          </details>
+          <details>
+            <summary>¿Puedo descargar los resultados?</summary>
+            <p>Sí. Después de sortear podés descargar un archivo JSON con la información del evento, restricciones y asignaciones.</p>
+          </details>
+          <details>
+            <summary>¿Funciona en GitHub Pages?</summary>
+            <p>Sí. La app es estática y funciona con HTML, CSS y JavaScript, sin backend ni instalación.</p>
+          </details>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

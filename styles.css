@@ -102,6 +102,27 @@ button {
   line-height: 1.7;
 }
 
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 42px;
+  margin-top: 18px;
+  padding: 0 16px;
+  color: #8f243d;
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid rgba(239, 93, 120, 0.28);
+  border-radius: var(--radius);
+  background: rgba(255, 154, 162, 0.18);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.help-link:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 154, 162, 0.28);
+}
+
 .gift-orbit {
   display: grid;
   place-items: center;
@@ -174,6 +195,8 @@ button {
 
 .draw-panel {
   align-self: start;
+  justify-self: center;
+  width: min(100%, 460px);
 }
 
 .panel__header {
@@ -590,6 +613,81 @@ button {
   width: 100%;
 }
 
+.help-page {
+  max-width: 1080px;
+}
+
+.help-hero {
+  grid-template-columns: minmax(0, 1fr) 220px;
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.help-card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.help-card--wide {
+  grid-column: 1 / -1;
+}
+
+.help-card h2 {
+  margin: 0;
+}
+
+.help-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.steps-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.steps-list strong {
+  color: var(--text);
+}
+
+.faq-list {
+  display: grid;
+  gap: 10px;
+}
+
+.faq-list details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.58);
+  overflow: hidden;
+}
+
+.faq-list summary {
+  cursor: pointer;
+  padding: 14px 16px;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.faq-list details[open] summary {
+  color: var(--danger);
+}
+
+.faq-list p {
+  padding: 0 16px 16px;
+}
+
 .close-result {
   position: absolute;
   top: 10px;
@@ -644,6 +742,11 @@ button {
 @media (max-width: 900px) {
   .hero,
   .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .help-hero,
+  .help-grid {
     grid-template-columns: 1fr;
   }
 

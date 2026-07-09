@@ -22,6 +22,7 @@ Aplicación web estática para organizar sorteos de Amigo Invisible con particip
 ```text
 /
 ├── index.html
+├── ayuda.html
 ├── styles.css
 ├── script.js
 ├── README.md
