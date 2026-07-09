@@ -437,6 +437,70 @@ button {
   margin-top: 8px;
 }
 
+.share-panel {
+  display: grid;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.share-panel h3 {
+  margin: 5px 0 6px;
+  font-size: 1rem;
+}
+
+.share-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.share-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.share-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.share-item strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.shared-view .event-panel,
+.shared-view .participants-panel,
+.shared-view .restrictions-panel,
+.shared-view .actions,
+.shared-view .results-card > .field,
+.shared-view #show-result,
+.shared-view #download-json,
+.shared-view #share-panel {
+  display: none !important;
+}
+
+.shared-view .close-result {
+  display: none !important;
+}
+
+.shared-view .draw-panel {
+  grid-column: 1 / -1;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+}
+
 .close-result {
   position: absolute;
   top: 10px;

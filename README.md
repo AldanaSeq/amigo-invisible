@@ -10,6 +10,8 @@ Aplicación web estática para organizar sorteos de Amigo Invisible con particip
 - Restricciones para evitar que dos personas se asignen entre sí.
 - Sorteo aleatorio donde nadie puede regalarse a sí mismo.
 - Resultado privado por participante.
+- Links privados para enviar un resultado individual a cada persona.
+- Guardado local en el navegador para no perder el sorteo al recargar.
 - Copia del resultado al portapapeles.
 - Descarga de resultados en JSON.
 - Reinicio del sorteo sin borrar participantes ni restricciones.
@@ -33,8 +35,16 @@ Aplicación web estática para organizar sorteos de Amigo Invisible con particip
 3. Agregá al menos 3 participantes.
 4. Agregá restricciones si dos personas no pueden tocarse entre sí.
 5. Presioná **Realizar sorteo**.
-6. Para ver un resultado, seleccioná un participante y presioná **Ver mi amigo invisible**.
-7. Cerrá el resultado para mantenerlo oculto.
+6. Para enviar resultados sin mostrar toda la lista, copiá el link privado de cada participante.
+7. Mandale a cada persona únicamente su propio link.
+8. Si querés ver un resultado desde la pantalla principal, seleccioná un participante y presioná **Ver mi amigo invisible**.
+9. Cerrá el resultado para mantenerlo oculto.
+
+## Cómo compartir los resultados
+
+Después de realizar el sorteo, la app genera un link privado por participante. Ese link contiene solamente el resultado de esa persona, por lo que puede abrirse desde otro navegador, celular o computadora sin depender de los datos guardados en tu navegador.
+
+Importante: como el sorteo se genera en tu navegador y no hay backend, la persona que organiza técnicamente podría abrir cualquier link antes de enviarlo. La app evita mostrar todos los resultados juntos, pero para que ni la persona organizadora pueda conocerlos haría falta un servidor o un sistema de claves más avanzado.
 
 ## Publicar en GitHub Pages
 

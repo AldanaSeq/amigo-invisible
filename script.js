@@ -1,8 +1,11 @@
 const state = {
   participants: [],
   restrictions: [],
-  assignments: null
+  assignments: null,
+  isSharedView: false
 };
+
+const STORAGE_KEY = "amigoInvisibleState";
 
 // Referencias centralizadas para mantener la lógica desacoplada del marcado.
 const elements = {
@@ -30,7 +33,9 @@ const elements = {
   assignedName: document.querySelector("#assigned-name"),
   closeResult: document.querySelector("#close-result"),
   copyResult: document.querySelector("#copy-result"),
-  downloadJson: document.querySelector("#download-json")
+  downloadJson: document.querySelector("#download-json"),
+  sharePanel: document.querySelector("#share-panel"),
+  shareList: document.querySelector("#share-list")
 };
 
 function normalizeName(name) {
@@ -47,11 +52,58 @@ function setStatus(message, type = "info") {
   elements.statusMessage.classList.toggle("is-success", type === "success");
 }
 
+function getEventDetails() {
+  return {
+    eventName: normalizeName(elements.eventName.value) || "Amigo Invisible",
+    budget: elements.giftBudget.value || null,
+    exchangeDate: elements.exchangeDate.value || null
+  };
+}
+
+function saveState() {
+  if (state.isSharedView) {
+    return;
+  }
+
+  const payload = {
+    ...getEventDetails(),
+    participants: state.participants,
+    restrictions: state.restrictions,
+    assignments: state.assignments
+  };
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+function loadSavedState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+
+  if (!saved) {
+    return false;
+  }
+
+  try {
+    const payload = JSON.parse(saved);
+    elements.eventName.value = payload.eventName || "";
+    elements.giftBudget.value = payload.budget || "";
+    elements.exchangeDate.value = payload.exchangeDate || "";
+    state.participants = Array.isArray(payload.participants) ? payload.participants : [];
+    state.restrictions = Array.isArray(payload.restrictions) ? payload.restrictions : [];
+    state.assignments = payload.assignments || null;
+    return true;
+  } catch {
+    localStorage.removeItem(STORAGE_KEY);
+    return false;
+  }
+}
+
 function clearDrawResult() {
   state.assignments = null;
   elements.resultsCard.hidden = true;
   elements.secretResult.hidden = true;
   elements.assignedName.textContent = "";
+  elements.sharePanel.hidden = true;
+  elements.shareList.innerHTML = "";
 }
 
 // Redibuja participantes, contadores y opciones dependientes.
@@ -117,6 +169,7 @@ function renderRestrictions() {
       state.restrictions.splice(index, 1);
       clearDrawResult();
       renderRestrictions();
+      saveState();
       setStatus("Restricción eliminada. Realizá el sorteo nuevamente cuando quieras.");
     });
 
@@ -150,6 +203,7 @@ function addParticipant() {
   elements.participantName.value = "";
   clearDrawResult();
   renderParticipants();
+  saveState();
   setStatus(`${name} fue agregado al sorteo.`);
 }
 
@@ -180,6 +234,7 @@ function updateParticipant(index, value) {
   }));
   clearDrawResult();
   renderParticipants();
+  saveState();
   setStatus("Participante actualizado. El sorteo anterior, si existía, fue limpiado.");
 }
 
@@ -191,6 +246,7 @@ function removeParticipant(index) {
   });
   clearDrawResult();
   renderParticipants();
+  saveState();
   setStatus(`${removed} fue eliminado de la lista.`);
 }
 
@@ -222,6 +278,7 @@ function addRestriction() {
   elements.restrictionB.value = "";
   clearDrawResult();
   renderRestrictions();
+  saveState();
   setStatus(`Restricción agregada: ${a} y ${b} no podrán tocarse.`);
 }
 
@@ -302,9 +359,11 @@ function runDraw() {
 
   state.assignments = assignments;
   renderViewerOptions();
+  renderShareLinks();
   elements.resultsCard.hidden = false;
   elements.secretResult.hidden = true;
-  setStatus("Sorteo realizado con éxito. Cada participante puede ver únicamente su resultado.", "success");
+  saveState();
+  setStatus("Sorteo realizado con éxito. Ahora podés copiar un link privado para cada participante.", "success");
   launchConfetti();
 }
 
@@ -312,6 +371,54 @@ function renderViewerOptions() {
   elements.viewerName.innerHTML = '<option value="">Seleccionar participante</option>' + state.participants
     .map((participant) => `<option value="${escapeHtml(participant)}">${escapeHtml(participant)}</option>`)
     .join("");
+}
+
+function renderShareLinks() {
+  elements.shareList.innerHTML = "";
+  elements.sharePanel.hidden = !state.assignments || state.isSharedView;
+
+  if (!state.assignments || state.isSharedView) {
+    return;
+  }
+
+  state.participants.forEach((participant) => {
+    const item = document.createElement("li");
+    item.className = "share-item";
+
+    const name = document.createElement("strong");
+    name.textContent = participant;
+
+    const button = document.createElement("button");
+    button.className = "button button--secondary";
+    button.type = "button";
+    button.textContent = "Copiar link";
+    button.addEventListener("click", () => copyPrivateLink(participant));
+
+    item.append(name, button);
+    elements.shareList.appendChild(item);
+  });
+}
+
+function createPrivateLink(participant) {
+  const payload = {
+    ...getEventDetails(),
+    participant,
+    receiver: state.assignments?.[participant]
+  };
+
+  const baseUrl = window.location.href.split("#")[0];
+  return `${baseUrl}#resultado=${encodeURIComponent(encodePayload(payload))}`;
+}
+
+async function copyPrivateLink(participant) {
+  const copied = await copyText(createPrivateLink(participant));
+
+  setStatus(
+    copied
+      ? `Link privado de ${participant} copiado. Mandáselo solo a esa persona.`
+      : "No se pudo copiar el link automáticamente. Probá copiarlo manualmente desde el navegador.",
+    copied ? "success" : "error"
+  );
 }
 
 function showResult() {
@@ -340,23 +447,25 @@ async function copyResult() {
     return;
   }
 
-  const text = `${participant}, tu amigo invisible es: ${receiver}`;
+  const copied = await copyText(`${participant}, tu amigo invisible es: ${receiver}`);
 
+  setStatus(
+    copied
+      ? "Resultado copiado al portapapeles."
+      : "No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente.",
+    copied ? "success" : "error"
+  );
+}
+
+async function copyText(text) {
   try {
     if (navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(text);
-    } else {
-      copyWithFallback(text);
+      return true;
     }
-    setStatus("Resultado copiado al portapapeles.", "success");
+    return copyWithFallback(text);
   } catch {
-    const copied = copyWithFallback(text);
-    setStatus(
-      copied
-        ? "Resultado copiado al portapapeles."
-        : "No se pudo copiar automáticamente. Podés seleccionar el texto y copiarlo manualmente.",
-      copied ? "success" : "error"
-    );
+    return copyWithFallback(text);
   }
 }
 
@@ -380,9 +489,7 @@ function downloadJson() {
   }
 
   const payload = {
-    eventName: normalizeName(elements.eventName.value) || "Amigo Invisible",
-    budget: elements.giftBudget.value || null,
-    exchangeDate: elements.exchangeDate.value || null,
+    ...getEventDetails(),
     restrictions: state.restrictions,
     assignments: state.assignments,
     createdAt: new Date().toISOString()
@@ -400,6 +507,7 @@ function downloadJson() {
 
 function resetDraw() {
   clearDrawResult();
+  saveState();
   setStatus("Sorteo reiniciado. Los participantes y restricciones se mantienen.");
 }
 
@@ -414,6 +522,79 @@ function launchConfetti() {
     origin: { y: 0.62 },
     colors: ["#3b82f6", "#8b5cf6", "#f7c948", "#ffffff"]
   });
+}
+
+function encodePayload(payload) {
+  const json = JSON.stringify(payload);
+  const bytes = new TextEncoder().encode(json);
+  let binary = "";
+  bytes.forEach((byte) => {
+    binary += String.fromCharCode(byte);
+  });
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+}
+
+function decodePayload(value) {
+  const base64 = value.replaceAll("-", "+").replaceAll("_", "/");
+  const padding = "=".repeat((4 - (base64.length % 4)) % 4);
+  const binary = atob(base64 + padding);
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  const json = new TextDecoder().decode(bytes);
+  return JSON.parse(json);
+}
+
+function getSharedPayload() {
+  const params = new URLSearchParams(window.location.hash.slice(1));
+  const token = params.get("resultado");
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    return decodePayload(token);
+  } catch {
+    return null;
+  }
+}
+
+function loadSharedResult(payload) {
+  state.isSharedView = true;
+  document.body.classList.add("shared-view");
+  elements.eventName.value = payload.eventName || "";
+  elements.giftBudget.value = payload.budget || "";
+  elements.exchangeDate.value = payload.exchangeDate || "";
+  state.participants = [payload.participant];
+  state.restrictions = [];
+  state.assignments = { [payload.participant]: payload.receiver };
+  renderParticipants();
+  renderViewerOptions();
+  elements.viewerName.value = payload.participant;
+  elements.resultsCard.hidden = false;
+  elements.secretResult.hidden = false;
+  elements.assignedName.textContent = payload.receiver;
+  setStatus("Este es tu resultado privado. Guardá este link si necesitás volver a verlo.", "success");
+}
+
+function initializeApp() {
+  const sharedPayload = getSharedPayload();
+
+  if (sharedPayload?.participant && sharedPayload?.receiver) {
+    loadSharedResult(sharedPayload);
+    return;
+  }
+
+  const hasSavedState = loadSavedState();
+  renderParticipants();
+
+  if (state.assignments) {
+    renderViewerOptions();
+    renderShareLinks();
+    elements.resultsCard.hidden = false;
+    setStatus("Recuperé el sorteo guardado en este navegador.", "success");
+  } else {
+    setStatus(hasSavedState ? "Recuperé tu lista guardada. Podés continuar el sorteo." : "Completá la lista de participantes para empezar.");
+  }
 }
 
 elements.addParticipant.addEventListener("click", addParticipant);
@@ -432,6 +613,15 @@ elements.closeResult.addEventListener("click", () => {
 });
 elements.copyResult.addEventListener("click", copyResult);
 elements.downloadJson.addEventListener("click", downloadJson);
+elements.eventName.addEventListener("input", saveState);
+elements.giftBudget.addEventListener("input", saveState);
+elements.exchangeDate.addEventListener("input", saveState);
+window.addEventListener("hashchange", () => {
+  const sharedPayload = getSharedPayload();
 
-renderParticipants();
-setStatus("Completá la lista de participantes para empezar.");
+  if (sharedPayload?.participant && sharedPayload?.receiver) {
+    loadSharedResult(sharedPayload);
+  }
+});
+
+initializeApp();
